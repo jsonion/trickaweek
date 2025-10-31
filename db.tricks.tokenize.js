@@ -6,7 +6,9 @@ import { x, y, trie,
            macroArrayAppend();
 
 export const cfg = {
-  rxSplit: /(?: *- *| *)/g,
+  rxSplit: /(?: *- *| +)/g,
+  replacer:
+  [/\s*-\/s*/g, (str) => str.toLowerCase()],
 };
 
 export default function main (trie=new Trie()) {
@@ -123,6 +125,9 @@ for (let degs in DEGS) {}
     ...x(SPIN["FS"], [degs], ["ollie"])
  ];
 
+AIR["sw fs 180"] =
+  x(STANCE["Switch"], [...AIR["FS 180 Ollie"]]); 
+
 Object.assign(STANCE_CHANGE, {
   "To Normal": ["normal", ...y("to", ["normal"])],
   "To Fakie": ["fakie", ...y("to", ["fakie"])],
@@ -146,7 +151,7 @@ Object.assign(MANUALS, {
 Object.assign(MANUALS, {
   "Nosemanual": [
    ...x("", ["nose"], MANUALS["Manual"]),
-   ...x(    ["nose"], MANUALS["Manual"])
+   ...x(    ["nose"], MANUALS["Manual"]),
   ],
 });
 
@@ -155,11 +160,13 @@ Object.assign(FLICK_TRICK, {
    ...x(["pop"], SUBPART["Shove-it"]),
                  SUBPART["Shove-it"]
   ],
-  // nollie fs shuvit
-  // nollie bs shuvit
+  // nollie fs shuv
+  // nollie bs shuv
 
   // nollie bs bigspin
   //  fakie bs bigspin
+
+  // switch fs shuv
 });
 
 Object.assign(GRINDS, {
@@ -168,26 +175,26 @@ Object.assign(GRINDS, {
 
  /*/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/*/
 
-Object.assign(DB, ...(bfr=[
-  {STANCE},
-  {STANCE_CHANGE},
-  {STANCE_LANDING},
+Object.assign(DB, {
+  STANCE,
+  STANCE_CHANGE,
+  STANCE_LANDING,
 
-  {AIR},
-  {FLICK_TRICK},
-  {LATE_TRICK},
-  {GRAB_TRICK},
+  AIR,
+  FLICK_TRICK,
+  LATE_TRICK,
+  GRAB_TRICK,
 
-  {GRIND},
-  {SLIDE},
-  {STALL},
-  {PLANT},
+  GRIND,
+  SLIDE,
+  STALL,
+  PLANT,
 
-  {MANUAL},
-  {FREESTYLE},
+  MANUAL,
+  FREESTYLE,
 
-  {SPECIAL_TRICKS},
-]));
+  SPECIAL_TRICKS,
+});
 
 //
 Object.entries(DB ).forEach(([cat,obj]) =>
@@ -202,4 +209,15 @@ Object.entries(obj).forEach(([ident,row]) =>
 })));
 
 return { DB, trie };
+}
+
+export function flattenTrick (str) {
+   /// like "360-Flip => 360 flip
+       return str.replace(cfg.replacer[0],
+                          cfg.replacer[1]);
+}
+
+export function trieNode (node, vals) {
+        if (!node) return node  =  [vals];
+                   return node.push(vals);
 }
